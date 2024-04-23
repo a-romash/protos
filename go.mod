@@ -1,4 +1,4 @@
-module github.com/a-romash/grpc-calculator/protos
+module github.com/a-romash/protos
 
 go 1.22.1
 

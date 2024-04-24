@@ -14,8 +14,10 @@ service Orchestrator {
     rpc GetExpressionToEvaluate (IdAgent) returns (Expression);
     // Agent gives result of solved expression back
     rpc GiveResultOfExpression (ResultOfExpression) returns (google.protobuf.Empty);
+    // Registers new agent and returns of his id
+    rpc RegisterNewAgent (google.protobuf.Empty) returns (IdAgent);
 }
- 
+
 message IsAlive {
     bool is_alive = 1; // Indicates whether agent is alive
     int32 id_agent = 2; // Id of agent

@@ -23,6 +23,7 @@ const (
 	Orchestrator_Heartbeat_FullMethodName               = "/orchestrator.Orchestrator/Heartbeat"
 	Orchestrator_GetExpressionToEvaluate_FullMethodName = "/orchestrator.Orchestrator/GetExpressionToEvaluate"
 	Orchestrator_GiveResultOfExpression_FullMethodName  = "/orchestrator.Orchestrator/GiveResultOfExpression"
+	Orchestrator_RegisterNewAgent_FullMethodName        = "/orchestrator.Orchestrator/RegisterNewAgent"
 )
 
 // OrchestratorClient is the client API for Orchestrator service.
@@ -35,6 +36,8 @@ type OrchestratorClient interface {
 	GetExpressionToEvaluate(ctx context.Context, in *IdAgent, opts ...grpc.CallOption) (*Expression, error)
 	// Agent gives result of solved expression back
 	GiveResultOfExpression(ctx context.Context, in *ResultOfExpression, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Registers new agent and returns of his id
+	RegisterNewAgent(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*IdAgent, error)
 }
 
 type orchestratorClient struct {
@@ -72,6 +75,15 @@ func (c *orchestratorClient) GiveResultOfExpression(ctx context.Context, in *Res
 	return out, nil
 }
 
+func (c *orchestratorClient) RegisterNewAgent(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*IdAgent, error) {
+	out := new(IdAgent)
+	err := c.cc.Invoke(ctx, Orchestrator_RegisterNewAgent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrchestratorServer is the server API for Orchestrator service.
 // All implementations must embed UnimplementedOrchestratorServer
 // for forward compatibility
@@ -82,6 +94,8 @@ type OrchestratorServer interface {
 	GetExpressionToEvaluate(context.Context, *IdAgent) (*Expression, error)
 	// Agent gives result of solved expression back
 	GiveResultOfExpression(context.Context, *ResultOfExpression) (*emptypb.Empty, error)
+	// Registers new agent and returns of his id
+	RegisterNewAgent(context.Context, *emptypb.Empty) (*IdAgent, error)
 	mustEmbedUnimplementedOrchestratorServer()
 }
 
@@ -97,6 +111,9 @@ func (UnimplementedOrchestratorServer) GetExpressionToEvaluate(context.Context, 
 }
 func (UnimplementedOrchestratorServer) GiveResultOfExpression(context.Context, *ResultOfExpression) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GiveResultOfExpression not implemented")
+}
+func (UnimplementedOrchestratorServer) RegisterNewAgent(context.Context, *emptypb.Empty) (*IdAgent, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterNewAgent not implemented")
 }
 func (UnimplementedOrchestratorServer) mustEmbedUnimplementedOrchestratorServer() {}
 
@@ -165,6 +182,24 @@ func _Orchestrator_GiveResultOfExpression_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Orchestrator_RegisterNewAgent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrchestratorServer).RegisterNewAgent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Orchestrator_RegisterNewAgent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrchestratorServer).RegisterNewAgent(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Orchestrator_ServiceDesc is the grpc.ServiceDesc for Orchestrator service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -183,6 +218,10 @@ var Orchestrator_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GiveResultOfExpression",
 			Handler:    _Orchestrator_GiveResultOfExpression_Handler,
+		},
+		{
+			MethodName: "RegisterNewAgent",
+			Handler:    _Orchestrator_RegisterNewAgent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

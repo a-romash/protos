@@ -40,4 +40,5 @@ message RPNToken {
 message ResultOfExpression {
     string id_expression = 1; //Id of expression
     float result = 2;
+    int32 id_agent = 3;
 }

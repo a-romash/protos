@@ -16,6 +16,8 @@ service Orchestrator {
     rpc GiveResultOfExpression (ResultOfExpression) returns (google.protobuf.Empty);
     // Registers new agent and returns of his id
     rpc RegisterNewAgent (google.protobuf.Empty) returns (IdAgent);
+    // Deletes agent from database
+    rpc RemoveAgent (IdAgent) returns (google.protobuf.Empty);
 }
 
 message IsAlive {
